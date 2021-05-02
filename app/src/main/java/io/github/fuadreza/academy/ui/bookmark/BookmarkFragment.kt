@@ -1,16 +1,16 @@
 package io.github.fuadreza.academy.ui.bookmark
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ShareCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.fuadreza.academy.R
 import io.github.fuadreza.academy.data.CourseEntity
 import io.github.fuadreza.academy.databinding.FragmentBookmarkBinding
-import io.github.fuadreza.academy.utils.DataDummy
 
 class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
 
@@ -20,8 +20,10 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // Inflate the layout for this fragment
         fragmentBookmarkBinding = FragmentBookmarkBinding.inflate(inflater, container, false)
         return fragmentBookmarkBinding.root
@@ -31,7 +33,12 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
         super.onViewCreated(view, savedInstanceState)
 
         if (activity != null) {
-            val courses = DataDummy.generateDummyCourses()
+            val viewModel = ViewModelProvider(
+                this,
+                ViewModelProvider.NewInstanceFactory()
+            )[BookmarkViewModel::class.java]
+            val courses = viewModel.getBookmarks()
+
             val adapter = BookmarkAdapter(this)
             adapter.setCourses(courses)
             with(fragmentBookmarkBinding.rvBookmark) {
