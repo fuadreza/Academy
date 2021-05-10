@@ -15,6 +15,7 @@ import io.github.fuadreza.academy.databinding.ActivityDetailCourseBinding
 import io.github.fuadreza.academy.databinding.ContentDetailCourseBinding
 import io.github.fuadreza.academy.ui.reader.CourseReaderActivity
 import io.github.fuadreza.academy.utils.DataDummy
+import io.github.fuadreza.academy.viewmodel.ViewModelFactory
 
 class DetailCourseActivity : AppCompatActivity() {
 
@@ -37,9 +38,10 @@ class DetailCourseActivity : AppCompatActivity() {
 
         val adapter = DetailCourseAdapter()
 
+        val factory = ViewModelFactory.getInstance(this)
         val viewModel = ViewModelProvider(
             this,
-            ViewModelProvider.NewInstanceFactory()
+            factory
         )[DetailCourseViewModel::class.java]
 
         val extras = intent.extras

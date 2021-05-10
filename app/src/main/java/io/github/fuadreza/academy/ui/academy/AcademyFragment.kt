@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.fuadreza.academy.databinding.FragmentAcademyBinding
+import io.github.fuadreza.academy.viewmodel.ViewModelFactory
 
 class AcademyFragment : Fragment() {
 
@@ -29,9 +30,11 @@ class AcademyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (activity != null) {
+            val factory = ViewModelFactory.getInstance(requireActivity())
+
             val viewModel = ViewModelProvider(
                 this,
-                ViewModelProvider.NewInstanceFactory()
+                factory
             )[AcademyViewModel::class.java]
             val courses = viewModel.getCourses()
 
