@@ -50,7 +50,13 @@ class ModuleListFragment : Fragment(), MyAdapterClickListener {
             ViewModelProvider.NewInstanceFactory()
         )[CourseReaderViewModel::class.java]
         adapter = ModuleListAdapter(this)
-        populateRecyclerView(viewModel.getModules())
+
+        fragmentModuleListBinding.progressBar.visibility = View.VISIBLE
+        viewModel.getModules().observe(viewLifecycleOwner, { modules ->
+            fragmentModuleListBinding.progressBar.visibility = View.GONE
+            populateRecyclerView(modules)
+        })
+//        populateRecyclerView(viewModel.getModules())
     }
 
     override fun onAttach(context: Context) {
@@ -63,7 +69,7 @@ class ModuleListFragment : Fragment(), MyAdapterClickListener {
         viewModel.setSelectedModule(moduleId)
     }
 
-    private fun populateRecyclerView(modules: List<ModuleEntity>) {
+    private fun populateRecyclerView(modules: ArrayList<ModuleEntity>) {
         with(fragmentModuleListBinding) {
             progressBar.visibility = View.GONE
             adapter.setModules(modules)

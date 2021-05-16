@@ -1,5 +1,6 @@
 package io.github.fuadreza.academy.ui.detail
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import io.github.fuadreza.academy.data.CourseEntity
 import io.github.fuadreza.academy.data.ModuleEntity
@@ -13,7 +14,7 @@ class DetailCourseViewModel(private var mAcademyRepository: AcademyRepository) :
         this.courseId = courseId
     }
 
-    fun getCourse(): CourseEntity = mAcademyRepository.getCourseWithModules(courseId)
+    fun getCourse(): LiveData<CourseEntity> = mAcademyRepository.getCourseWithModules(courseId)
 
-    fun getModules(): List<ModuleEntity> = mAcademyRepository.getAllModulesByCourse(courseId)
+    fun getModules(): LiveData<ArrayList<ModuleEntity>> = mAcademyRepository.getAllModulesByCourse(courseId)
 }

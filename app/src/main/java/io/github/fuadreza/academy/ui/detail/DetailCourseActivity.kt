@@ -2,6 +2,7 @@ package io.github.fuadreza.academy.ui.detail
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -14,7 +15,6 @@ import io.github.fuadreza.academy.data.CourseEntity
 import io.github.fuadreza.academy.databinding.ActivityDetailCourseBinding
 import io.github.fuadreza.academy.databinding.ContentDetailCourseBinding
 import io.github.fuadreza.academy.ui.reader.CourseReaderActivity
-import io.github.fuadreza.academy.utils.DataDummy
 import io.github.fuadreza.academy.viewmodel.ViewModelFactory
 
 class DetailCourseActivity : AppCompatActivity() {
@@ -48,10 +48,23 @@ class DetailCourseActivity : AppCompatActivity() {
         if (extras != null) {
             val courseId = extras.getString(EXTRA_COURSE)
             if (courseId != null) {
+
+                activityDetailCourseBinding.progressBar.visibility = View.VISIBLE
+                activityDetailCourseBinding.content.visibility = View.INVISIBLE
+
+
                 viewModel.setSelectedCourse(courseId)
-                val modules = DataDummy.generateDummyModules(courseId)
-                adapter.setModules(modules)
-                populateCourse(viewModel.getCourse())
+                viewModel.getModules().observe(this, { modules ->
+                    activityDetailCourseBinding.progressBar.visibility = View.GONE
+                    activityDetailCourseBinding.content.visibility = View.VISIBLE
+                    adapter.setModules(modules)
+                    adapter.notifyDataSetChanged()
+                })
+                viewModel.getCourse().observe(this, { course -> populateCourse(course) })
+
+//                val modules = DataDummy.generateDummyModules(courseId)
+//                adapter.setModules(modules)
+//                populateCourse(viewModel.getCourse())
 //                for (course in DataDummy.generateDummyCourses()) {
 //                    if (course.courseId == courseId) {
 //                        populateCourse(course)
@@ -81,7 +94,7 @@ class DetailCourseActivity : AppCompatActivity() {
             .load(courseEntity.imagePath)
             .transform(RoundedCorners(20))
             .apply(
-                RequestOptions.placeholderOf(R.drawable.ic_loading)
+                RequestOptions.placeholderOf(R.drawable.ic_loading_img)
                     .error(R.drawable.ic_error)
             )
             .into(detailContentBinding.imagePoster)

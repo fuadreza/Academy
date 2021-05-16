@@ -48,7 +48,7 @@ class AcademyAdapter : RecyclerView.Adapter<AcademyAdapter.CourseViewHolder>() {
                 Glide.with(itemView.context)
                     .load(course.imagePath)
                     .apply(
-                        RequestOptions.placeholderOf(R.drawable.ic_loading)
+                        RequestOptions.placeholderOf(R.drawable.ic_loading_img)
                             .error(R.drawable.ic_error)
                     )
                     .into(imgPoster)
