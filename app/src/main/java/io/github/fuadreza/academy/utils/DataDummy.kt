@@ -8,7 +8,7 @@ import io.github.fuadreza.academy.data.source.remote.response.ModuleResponse
 
 object DataDummy {
 
-    fun generateDummyCourses(): List<CourseEntity> {
+    fun generateDummyCourses(): ArrayList<CourseEntity> {
 
         val courses = ArrayList<CourseEntity>()
 
