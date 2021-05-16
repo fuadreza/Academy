@@ -5,6 +5,7 @@ import android.os.Looper
 import io.github.fuadreza.academy.data.source.remote.response.ContentResponse
 import io.github.fuadreza.academy.data.source.remote.response.CourseResponse
 import io.github.fuadreza.academy.data.source.remote.response.ModuleResponse
+import io.github.fuadreza.academy.utils.EspressoIdlingResource
 import io.github.fuadreza.academy.utils.JsonHelper
 
 class RemoteDataSource private constructor(private val jsonHelper: JsonHelper) {
@@ -30,15 +31,27 @@ class RemoteDataSource private constructor(private val jsonHelper: JsonHelper) {
 //    fun getContent(moduleId: String): ContentResponse = jsonHelper.loadContent(moduleId)
 
     fun getAllCourses(callback: LoadCoursesCallback) {
-        handler.postDelayed({ callback.onAllCoursesReceived(jsonHelper.loadCourses()) }, SERVICE_LATENCY_IN_MILLIS)
+        EspressoIdlingResource.increment()
+        handler.postDelayed({
+            callback.onAllCoursesReceived(jsonHelper.loadCourses())
+            EspressoIdlingResource.decrement()
+                            }, SERVICE_LATENCY_IN_MILLIS)
     }
 
     fun getModules(courseId: String, callback: LoadModulesCallback) {
-        handler.postDelayed({ callback.onAllModulesReceived(jsonHelper.loadModule(courseId)) }, SERVICE_LATENCY_IN_MILLIS)
+        EspressoIdlingResource.increment()
+        handler.postDelayed({
+            callback.onAllModulesReceived(jsonHelper.loadModule(courseId))
+            EspressoIdlingResource.decrement()
+                            }, SERVICE_LATENCY_IN_MILLIS)
     }
 
     fun getContent(moduleId: String, callback: LoadContentCallback) {
-        handler.postDelayed({ callback.onContentReceived(jsonHelper.loadContent(moduleId)) }, SERVICE_LATENCY_IN_MILLIS)
+        EspressoIdlingResource.increment()
+        handler.postDelayed({
+            callback.onContentReceived(jsonHelper.loadContent(moduleId))
+            EspressoIdlingResource.decrement()
+                            }, SERVICE_LATENCY_IN_MILLIS)
     }
 
     interface LoadCoursesCallback {
