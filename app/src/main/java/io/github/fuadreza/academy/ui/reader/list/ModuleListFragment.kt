@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.fuadreza.academy.data.ModuleEntity
+import io.github.fuadreza.academy.data.vo.Status
 import io.github.fuadreza.academy.databinding.FragmentModuleListBinding
 import io.github.fuadreza.academy.ui.reader.CourseReaderActivity
 import io.github.fuadreza.academy.ui.reader.CourseReaderCallback
@@ -23,7 +25,7 @@ class ModuleListFragment : Fragment(), MyAdapterClickListener {
         fun newInstance(): ModuleListFragment = ModuleListFragment()
     }
 
-    private lateinit var fragmentModuleListBinding: FragmentModuleListBinding
+    private lateinit var binding: FragmentModuleListBinding
     private lateinit var adapter: ModuleListAdapter
     private lateinit var courseReaderCallback: CourseReaderCallback
 
@@ -38,8 +40,8 @@ class ModuleListFragment : Fragment(), MyAdapterClickListener {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        fragmentModuleListBinding = FragmentModuleListBinding.inflate(inflater, container, false)
-        return fragmentModuleListBinding.root
+        binding = FragmentModuleListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,12 +53,21 @@ class ModuleListFragment : Fragment(), MyAdapterClickListener {
         )[CourseReaderViewModel::class.java]
         adapter = ModuleListAdapter(this)
 
-        fragmentModuleListBinding.progressBar.visibility = View.VISIBLE
-        viewModel.getModules().observe(viewLifecycleOwner, { modules ->
-            fragmentModuleListBinding.progressBar.visibility = View.GONE
-            populateRecyclerView(modules)
+        viewModel.modules.observe(viewLifecycleOwner, { moduleEntities ->
+            if (moduleEntities != null) {
+                when (moduleEntities.status) {
+                    Status.LOADING -> binding?.progressBar?.visibility = View.VISIBLE
+                    Status.SUCCESS -> {
+                        binding?.progressBar?.visibility = View.GONE
+                        populateRecyclerView(moduleEntities.data as ArrayList<ModuleEntity>)
+                    }
+                    Status.ERROR -> {
+                        binding?.progressBar?.visibility = View.GONE
+                        Toast.makeText(context, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         })
-//        populateRecyclerView(viewModel.getModules())
     }
 
     override fun onAttach(context: Context) {
@@ -70,7 +81,7 @@ class ModuleListFragment : Fragment(), MyAdapterClickListener {
     }
 
     private fun populateRecyclerView(modules: ArrayList<ModuleEntity>) {
-        with(fragmentModuleListBinding) {
+        with(binding) {
             progressBar.visibility = View.GONE
             adapter.setModules(modules)
             rvModule.layoutManager = LinearLayoutManager(context)

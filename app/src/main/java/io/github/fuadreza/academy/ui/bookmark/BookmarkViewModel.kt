@@ -8,5 +8,5 @@ import io.github.fuadreza.academy.utils.DataDummy
 
 class BookmarkViewModel(private val academyRepository: AcademyRepository) : ViewModel() {
 
-    fun getBookmarks(): LiveData<ArrayList<CourseEntity>> = academyRepository.getBookmarkedCourses()
+    fun getBookmarks(): LiveData<List<CourseEntity>> = academyRepository.getBookmarkedCourses()
 }

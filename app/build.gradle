@@ -71,4 +71,8 @@ dependencies {
 
     //idling resource
     implementation "androidx.test.espresso:espresso-idling-resource:$idleResourceVersion"
+
+    //room
+    implementation "androidx.room:room-runtime:$roomRuntimeVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
 }

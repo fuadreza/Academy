@@ -2,17 +2,22 @@ package io.github.fuadreza.academy.data.source
 
 import androidx.lifecycle.LiveData
 import io.github.fuadreza.academy.data.CourseEntity
+import io.github.fuadreza.academy.data.CourseWithModule
 import io.github.fuadreza.academy.data.ModuleEntity
+import io.github.fuadreza.academy.data.vo.Resource
 
 interface AcademyDataSource {
 
-    fun getAllCourses(): LiveData<ArrayList<CourseEntity>>
+    fun getAllCourses(): LiveData<Resource<List<CourseEntity>>>
 
-    fun getBookmarkedCourses(): LiveData<ArrayList<CourseEntity>>
+    fun getCourseWithModules(courseId: String): LiveData<Resource<CourseWithModule>>
 
-    fun getCourseWithModules(courseId: String): LiveData<CourseEntity>
+    fun getAllModulesByCourse(courseId: String): LiveData<Resource<List<ModuleEntity>>>
 
-    fun getAllModulesByCourse(courseId: String): LiveData<ArrayList<ModuleEntity>>
+    fun getContent(moduleId: String): LiveData<Resource<ModuleEntity>>
 
-    fun getContent(courseId: String, moduleId: String): LiveData<ModuleEntity>
+    fun getBookmarkedCourses(): LiveData<List<CourseEntity>>
+
+    fun setCourseBookmark(course: CourseEntity, state: Boolean)
+    fun setReadModule(module: ModuleEntity)
 }

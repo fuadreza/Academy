@@ -39,6 +39,9 @@ ext {
     materialVersion = '1.2.1'
     recyclerViewVersion = '1.1.0'
     glideVersion = '4.11.0'
+
+    roomVersion = '2.2.3'
+    roomRuntimeVersion = '2.2.5'
 }
 
 task clean(type: Delete) {

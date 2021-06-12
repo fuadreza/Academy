@@ -3,6 +3,7 @@ package io.github.fuadreza.academy.ui.detail
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -12,6 +13,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import io.github.fuadreza.academy.R
 import io.github.fuadreza.academy.data.CourseEntity
+import io.github.fuadreza.academy.data.vo.Status
 import io.github.fuadreza.academy.databinding.ActivityDetailCourseBinding
 import io.github.fuadreza.academy.databinding.ContentDetailCourseBinding
 import io.github.fuadreza.academy.ui.reader.CourseReaderActivity
@@ -54,22 +56,25 @@ class DetailCourseActivity : AppCompatActivity() {
 
 
                 viewModel.setSelectedCourse(courseId)
-                viewModel.getModules().observe(this, { modules ->
-                    activityDetailCourseBinding.progressBar.visibility = View.GONE
-                    activityDetailCourseBinding.content.visibility = View.VISIBLE
-                    adapter.setModules(modules)
-                    adapter.notifyDataSetChanged()
-                })
-                viewModel.getCourse().observe(this, { course -> populateCourse(course) })
 
-//                val modules = DataDummy.generateDummyModules(courseId)
-//                adapter.setModules(modules)
-//                populateCourse(viewModel.getCourse())
-//                for (course in DataDummy.generateDummyCourses()) {
-//                    if (course.courseId == courseId) {
-//                        populateCourse(course)
-//                    }
-//                }
+                viewModel.courseModule.observe(this, { courseWithModuleResource ->
+                    if (courseWithModuleResource != null) {
+                        when (courseWithModuleResource.status) {
+                            Status.LOADING -> activityDetailCourseBinding.progressBar.visibility = View.VISIBLE
+                            Status.SUCCESS -> if (courseWithModuleResource.data != null) {
+                                activityDetailCourseBinding.progressBar.visibility = View.GONE
+                                activityDetailCourseBinding.content.visibility = View.VISIBLE
+                                adapter.setModules(courseWithModuleResource.data.mModules)
+                                adapter.notifyDataSetChanged()
+                                populateCourse(courseWithModuleResource.data.mCourse)
+                            }
+                            Status.ERROR -> {
+                                activityDetailCourseBinding.progressBar.visibility = View.GONE
+                                Toast.makeText(applicationContext, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                })
             }
         }
 
