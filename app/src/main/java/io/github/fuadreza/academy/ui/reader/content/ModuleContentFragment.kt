@@ -11,6 +11,7 @@ import io.github.fuadreza.academy.data.ModuleEntity
 import io.github.fuadreza.academy.data.vo.Status
 import io.github.fuadreza.academy.databinding.FragmentModuleContentBinding
 import io.github.fuadreza.academy.ui.reader.CourseReaderViewModel
+import io.github.fuadreza.academy.viewmodel.ViewModelFactory
 
 class ModuleContentFragment : Fragment() {
 
@@ -20,6 +21,8 @@ class ModuleContentFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentModuleContentBinding
+
+    private lateinit var viewModel: CourseReaderViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +41,10 @@ class ModuleContentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (activity != null) {
-            val viewModel = ViewModelProvider(
+            val factory = ViewModelFactory.getInstance(requireActivity())
+            viewModel = ViewModelProvider(
                 requireActivity(),
-                ViewModelProvider.NewInstanceFactory()
+                factory
             )[CourseReaderViewModel::class.java]
 
             viewModel.selectedModule.observe(viewLifecycleOwner, { moduleEntity ->
@@ -52,7 +56,7 @@ class ModuleContentFragment : Fragment() {
                             if (moduleEntity.data.contentEntity != null) {
                                 populateWebView(moduleEntity.data)
                             }
-//                            setButtonNextPrevState(moduleEntity.data)
+                            setButtonNextPrevState(moduleEntity.data)
                             if (!moduleEntity.data.read) {
                                 viewModel.readContent(moduleEntity.data)
                             }
@@ -62,6 +66,10 @@ class ModuleContentFragment : Fragment() {
                             Toast.makeText(context, "Terjadi kesalahan", Toast.LENGTH_SHORT).show()
                         }
                     }
+
+                    binding?.btnNext?.setOnClickListener { viewModel.setNextPage() }
+                    binding?.btnPrev?.setOnClickListener { viewModel.setPrevPage() }
+
                 }
             })
         }
@@ -75,4 +83,22 @@ class ModuleContentFragment : Fragment() {
         )
     }
 
+    private fun setButtonNextPrevState(module: ModuleEntity) {
+        if (activity != null) {
+            when (module.position) {
+                0 -> {
+                    binding?.btnPrev?.isEnabled = false
+                    binding?.btnNext?.isEnabled = true
+                }
+                viewModel.getModuleSize() - 1 -> {
+                    binding?.btnPrev?.isEnabled = true
+                    binding?.btnNext?.isEnabled = false
+                }
+                else -> {
+                    binding?.btnPrev?.isEnabled = true
+                    binding?.btnNext?.isEnabled = true
+                }
+            }
+        }
+    }
 }
