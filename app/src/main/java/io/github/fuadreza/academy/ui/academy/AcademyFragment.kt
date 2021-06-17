@@ -40,14 +40,14 @@ class AcademyFragment : Fragment() {
             )[AcademyViewModel::class.java]
 
             val academyAdapter = AcademyAdapter()
+
             viewModel.getCourses().observe(viewLifecycleOwner, { courses ->
                 if (courses != null) {
                     when (courses.status) {
                         Status.LOADING -> binding?.progressBar?.visibility = View.VISIBLE
                         Status.SUCCESS -> {
                             binding?.progressBar?.visibility = View.GONE
-                            academyAdapter.setCourses(courses.data)
-                            academyAdapter.notifyDataSetChanged()
+                            academyAdapter.submitList(courses.data)
                         }
                         Status.ERROR -> {
                             binding?.progressBar?.visibility = View.GONE
@@ -62,6 +62,7 @@ class AcademyFragment : Fragment() {
                 this?.setHasFixedSize(true)
                 this?.adapter = academyAdapter
             }
+
         }
     }
 }
